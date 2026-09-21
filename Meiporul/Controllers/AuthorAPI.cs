@@ -1,12 +1,14 @@
 ﻿using AuthorAPI.Data;
 using AuthorAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthorAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AuthorsController : ControllerBase
     {
         private readonly AuthorDbContext _context;
@@ -18,6 +20,7 @@ namespace AuthorAPI.Controllers
 
         // GET: api/authors
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AuthorAPI.Models.Author>>> GetAuthors()
         {
             return await _context.Authors.Where(a => a.IsActive).ToListAsync();
@@ -25,6 +28,7 @@ namespace AuthorAPI.Controllers
 
         // GET: api/authors/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthorAPI.Models.Author>> GetAuthor(int id)
         {
             var author = await _context.Authors.FindAsync(id);
