@@ -38,11 +38,42 @@ namespace AuthorAPI.Controllers
 
         // POST: api/authors
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthorAPI.Models.Author>> CreateAuthor(AuthorAPI.Models.Author author)
         {
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetAuthor), new { id = author.AuthorId }, author);
+        }
+        // PUT: api/authors/5
+        [HttpPut("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UpdateAuthor(int id,AuthorAPI.Models.Author author)
+        {
+            if (id != author.AuthorId)
+            {
+                return BadRequest();
+            }
+
+            var existingAuthor = await _context.Authors.FindAsync(id);
+
+            if (existingAuthor == null)
+            {
+                return NotFound();
+            }
+
+            existingAuthor.NameEn = author.NameEn;
+            existingAuthor.NameTa = author.NameTa;
+            existingAuthor.Role = author.Role;
+            existingAuthor.BioEn = author.BioEn;
+            existingAuthor.BioTa = author.BioTa;
+            existingAuthor.PhotoUrl = author.PhotoUrl;
+            existingAuthor.SocialLink = author.SocialLink;
+            existingAuthor.IsActive = author.IsActive;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
